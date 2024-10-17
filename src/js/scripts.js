@@ -19,7 +19,14 @@ const axesHelper = new THREE.AxesHelper(3);
 
 scene.add(axesHelper);
 
-camera.position.z = 5;
-camera.position.y = 2;
+camera.position.set(0, 2, 5);
+
+const boxGeometry = new THREE.BoxGeometry();
+const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const box = new THREE.Mesh(boxGeometry, boxMaterial);
+
+scene.add(box);
+
+box.rotation.set(5, 5, 0);
 
 renderer.render(scene, camera);
