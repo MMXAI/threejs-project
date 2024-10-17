@@ -1,40 +1,81 @@
 import * as THREE from "three";
 
-//Creating renderer, camera, and scene
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
 
-const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  1,
-  500
-);
-camera.position.set(0, 0, 100);
-camera.lookAt(0, 0, 0);
+let camera, scene, renderer;
 
-const scene = new THREE.Scene();
+init();
 
-//Next thing we will do is define a material.
-//For lines we have to use LineBasicMaterial or LineDashedMaterial.
+function init() {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
 
-//create a blue LineBasicMaterial
-const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  camera = new THREE.PerspectiveCamera(
+    50,
+    window.innerWidth / window.innerHeight,
+    0.25,
+    20
+  );
+  camera.position.set(-1.8, 0.6, 2.7);
 
-//After material we will need a geometry with some vertices:
-const points = [];
-points.push(new THREE.Vector3(-10, 0, 0));
-points.push(new THREE.Vector3(0, 10, 0));
-points.push(new THREE.Vector3(10, 0, 0));
+  scene = new THREE.Scene();
 
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  new RGBELoader()
+    .setPath("./models/textures/")
+    .load("royal_esplanade_1k.hdr", function (texture) {
+      texture.mapping = THREE.EquirectangularReflectionMapping;
 
-//Now that we have points for two lines and a material,
-//we can put them together to form a line.
+      scene.background = texture;
+      scene.environment = texture;
 
-const line = new THREE.Line(geometry, material);
+      render();
 
-//All that's left is to add it to the scene and call render.
-scene.add(line);
-renderer.render(scene, camera);
+      // model
+
+      const loader = new GLTFLoader().setPath("./models/");
+      loader.load("scene.gltf", async function (gltf) {
+        const model = gltf.scene;
+
+        // wait until the model can be added to the scene without blocking due to shader compilation
+
+        await renderer.compileAsync(model, camera, scene);
+
+        scene.add(model);
+
+        render();
+      });
+    });
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1;
+  container.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.addEventListener("change", render); // use if there is no animation loop
+  controls.minDistance = 2;
+  controls.maxDistance = 10;
+  controls.target.set(0, 0, -0.2);
+  controls.update();
+
+  window.addEventListener("resize", onWindowResize);
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  render();
+}
+
+//
+
+function render() {
+  renderer.render(scene, camera);
+}
