@@ -6,6 +6,7 @@
 
 ```bash
 npm init -y
-npm install --save-dev vite
+npm install --save-dev parcel
 npm install --save three
+npx parcel ./src/index.html
 ```
