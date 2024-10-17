@@ -19,7 +19,7 @@ const axesHelper = new THREE.AxesHelper(3);
 
 scene.add(axesHelper);
 
-camera.position.set(0, 2, 5);
+camera.position.set(0, 0, 5);
 
 const boxGeometry = new THREE.BoxGeometry();
 const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
@@ -27,6 +27,10 @@ const box = new THREE.Mesh(boxGeometry, boxMaterial);
 
 scene.add(box);
 
-box.rotation.set(5, 5, 0);
+function animate() {
+  box.rotation.x += 0.01;
+  box.rotation.y += 0.01;
+  renderer.render(scene, camera);
+}
 
-renderer.render(scene, camera);
+renderer.setAnimationLoop(animate);
