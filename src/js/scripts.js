@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as dat from "dat.gui";
 
 const renderer = new THREE.WebGLRenderer();
 
@@ -49,6 +50,21 @@ const sphereMaterial = new THREE.MeshBasicMaterial({
 });
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
+
+const gui = new dat.GUI();
+
+const options = {
+  sphereColor: "#ffea00",
+  wireframe: true,
+};
+
+gui.addColor(options, "sphereColor").onChange(function (e) {
+  sphere.material.color.set(e);
+});
+
+gui.add(options, "wireframe").onChange(function (e) {
+  sphere.material.wireframe = e;
+});
 
 function animate() {
   box.rotation.x += 0.01;
