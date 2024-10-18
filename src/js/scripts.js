@@ -43,7 +43,7 @@ plane.rotation.x = -0.5 * Math.PI;
 const gridHelper = new THREE.GridHelper(30, 10);
 scene.add(gridHelper);
 
-const sphereGeometry = new THREE.SphereGeometry(4, 100, 100);
+const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
 const sphereMaterial = new THREE.MeshBasicMaterial({
   color: 0x0000ff,
   wireframe: true,
@@ -56,6 +56,7 @@ const gui = new dat.GUI();
 const options = {
   sphereColor: "#ffea00",
   wireframe: true,
+  speed: 0.01,
 };
 
 gui.addColor(options, "sphereColor").onChange(function (e) {
@@ -66,9 +67,17 @@ gui.add(options, "wireframe").onChange(function (e) {
   sphere.material.wireframe = e;
 });
 
+gui.add(options, "speed", 0, 0.1);
+
+let step = 0;
+
 function animate() {
   box.rotation.x += 0.01;
   box.rotation.y += 0.01;
+
+  step += options.speed;
+  sphere.position.y = 5 * Math.abs(Math.sin(step)) + 4;
+
   renderer.render(scene, camera);
 }
 
