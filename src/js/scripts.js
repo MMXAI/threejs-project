@@ -82,6 +82,10 @@ spotLight.angle = 0.6;
 const sLightHelper = new THREE.SpotLightHelper(spotLight, "yellow");
 scene.add(sLightHelper);
 
+//Two ways to create fog
+//scene.fog = new THREE.Fog("black", 0, 150);
+scene.fog = new THREE.FogExp2("black", 0.01);
+
 const axes = new THREE.AxesHelper(6);
 scene.add(axes);
 axes.position.set(-15, 4, -15);
