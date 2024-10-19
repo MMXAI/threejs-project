@@ -4,6 +4,8 @@ import * as dat from "dat.gui";
 
 const renderer = new THREE.WebGLRenderer();
 
+renderer.shadowMap.enabled = true;
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
@@ -32,30 +34,54 @@ const box = new THREE.Mesh(boxGeometry, boxMaterial);
 scene.add(box);
 
 const planeGeometry = new THREE.PlaneGeometry(30, 30);
-const planeMaterial = new THREE.MeshBasicMaterial({
+const planeMaterial = new THREE.MeshStandardMaterial({
   color: 0xffffff,
   side: THREE.DoubleSide,
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 plane.rotation.x = -0.5 * Math.PI;
+plane.receiveShadow = true;
 
 const gridHelper = new THREE.GridHelper(30, 10);
 scene.add(gridHelper);
 
 const sphereGeometry = new THREE.SphereGeometry(4, 20, 20);
-const sphereMaterial = new THREE.MeshBasicMaterial({
-  color: 0x0000ff,
-  wireframe: true,
+const sphereMaterial = new THREE.MeshStandardMaterial({
+  color: "#ffea00",
+  wireframe: false,
 });
 const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
+sphere.position.set(-8, 0, -8);
+sphere.castShadow = true;
+
+const ambientLight = new THREE.AmbientLight(0x333333);
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+scene.add(directionalLight);
+directionalLight.position.set(-25, 30, -25);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.bottom = -12;
+
+const dLightHelper = new THREE.DirectionalLightHelper(directionalLight, 2);
+scene.add(dLightHelper);
+
+const dLightShadowHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+scene.add(dLightShadowHelper);
+
+const axes = new THREE.AxesHelper(6);
+scene.add(axes);
+axes.position.set(-15, 4, -15);
 
 const gui = new dat.GUI();
 
 const options = {
   sphereColor: "#ffea00",
-  wireframe: true,
+  wireframe: false,
   speed: 0.01,
 };
 
