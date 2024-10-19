@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import * as dat from "dat.gui";
 
+import nebula from "../img/nebula.jpg";
+import stars from "../img/stars.jpg";
+
 const renderer = new THREE.WebGLRenderer();
 
 renderer.shadowMap.enabled = true;
@@ -82,9 +85,32 @@ spotLight.angle = 0.6;
 const sLightHelper = new THREE.SpotLightHelper(spotLight, "yellow");
 scene.add(sLightHelper);
 
-//Two ways to create fog
+//Two methods to create a fog effect
+// Fog & FogExp2
 //scene.fog = new THREE.Fog("black", 0, 150);
-scene.fog = new THREE.FogExp2("black", 0.01);
+scene.fog = new THREE.FogExp2("white", 0.01);
+
+//Setting the World background color
+//renderer.setClearColor("grey");
+
+//Two ways to load texture
+// TextureLoader & CubeTextureLoader
+const textureLoader = new THREE.TextureLoader();
+const myTexture = textureLoader.load(stars);
+myTexture.colorSpace = THREE.SRGBColorSpace;
+myTexture.minFilter = THREE.NearestFilter;
+//scene.background = myTexture;
+
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const myCubeTexture = cubeTextureLoader.load([
+  nebula,
+  nebula,
+  stars,
+  stars,
+  stars,
+  stars,
+]);
+scene.background = myCubeTexture;
 
 const axes = new THREE.AxesHelper(6);
 scene.add(axes);
